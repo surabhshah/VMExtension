@@ -1,0 +1,215 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "type": "string",
+	  "defaultValue": "adminuser",
+      "metadata": {
+        "description": "Username for the Virtual Machine."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+	  "defaultValue": "Microsoft!@#$",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    },
+	"PIdnsLabelPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS Name for the Public IP used to access the PI Virtual Machine."
+      }
+    }
+  },
+  "variables": {
+	"PIstorageAccountName": "[concat(uniquestring(resourceGroup().id), 'pivm')]",
+	"PInicName": "PIVMNic",
+	"PIpublicIPAddressName": "PIPublicIP",
+	"PIvmName": "TempPICoreVM",
+	"PInetworkSecurityGroupName":"PINSG",
+	"PIwindowsOSVersion": "2016-Datacenter",
+	"addressPrefix": "10.0.0.0/16",
+    "subnetName": "Subnet",
+	"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
+    "subnetPrefix": "10.0.0.0/24",
+	"virtualNetworkName": "MyVNET"
+  },
+  "resources": [
+	{
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('PIstorageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage",
+      "properties": {}
+    },
+	{
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+	{
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('PIpublicIPAddressName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('PIdnsLabelPrefix')]"
+        }
+      }
+    },
+	{
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('PInicName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('PIpublicIPAddressName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+		"[resourceId('Microsoft.Network/networkSecurityGroups/', variables('PInetworkSecurityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('PIpublicIPAddressName'))]"
+              },
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('PInetworkSecurityGroupName'))]"
+        }
+      }
+    },
+	{
+        "name": "[variables('PInetworkSecurityGroupName')]",
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "apiVersion": "2016-09-01",
+        "location": "[resourceGroup().location]",
+        "properties": {
+            "securityRules": [
+                {
+                    "name": "default-allow-rdp",
+                    "properties": {
+                        "priority": 1000,
+                        "sourceAddressPrefix": "*",
+                        "protocol": "TCP",
+                        "destinationPortRange": "3389",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*"
+                    }
+                }
+            ]
+        }
+    },
+    {
+      "apiVersion": "2016-04-30-preview",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('PIvmName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('PIstorageAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', variables('PInicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_DS3_v2"
+        },
+        "osProfile": {
+          "computerName": "[variables('PIvmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[variables('PIwindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('PInicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('PIstorageAccountName'))).primaryEndpoints.blob]"
+          }
+        }
+      }
+    },
+    {
+        "apiVersion": "2015-06-15",
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "config-app",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]",
+        "[variables('musicstoresqlName')]"
+        ],
+        "tags": {
+        "displayName": "config-app"
+        },
+        "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+            "fileUris": [
+            "https://raw.githubusercontent.com/surabhshah/VMExtension/master/VMAuto.ps1"
+            ]
+        },
+        "protectedSettings": {
+            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File VMAuto.ps1 -apiAppURI https://msiotoutlook.onmicrosoft.com/1c824300-190c-4663-88d7-5d1cde815c2b -adAppId 2f5dbaee-de36-4a1f-bf41-2467710bd11e -adClientSecret E2pO+L1T+1hx9EcBBKpMOfdvD9d6eX8H7UOjal1jpXA= -adTenantName msiotoutlook.onmicrosoft.com -restServer https://assetSynnexAPIServ.azurewebsites.net/')]"
+        }
+        }
+    }
+  ],
+  "outputs": {
+    "hostname": {
+      "type": "string",
+      "value": "[reference(variables('PIpublicIPAddressName')).dnsSettings.fqdn]"
+    }
+  }
+}
