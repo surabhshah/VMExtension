@@ -46,6 +46,7 @@ Expand-Archive C:\temp\GPSServer.zip c:\gpsServer
 [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_DeviceName", "SynnexGPSGateway", [EnvironmentVariableTarget]::Machine)
 
 #Start Node Server
+cp "C:\gpsServer\GPSServer\serverRun.cmd" "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
 start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 start "C:\Program Files\nodejs\node.exe" "C:\gpsServer\GPSServer\server.js"
 
