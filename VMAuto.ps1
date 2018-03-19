@@ -46,9 +46,9 @@ Expand-Archive C:\temp\GPSServer.zip c:\gpsServer
 [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_DeviceName", "SynnexGPSGateway", [EnvironmentVariableTarget]::Machine)
 
 #Start Node Server
-cp "C:\gpsServer\GPSServer\serverRun.cmd" "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
 start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 start "C:\Program Files\nodejs\node.exe" "C:\gpsServer\GPSServer\server.js"
+cp "C:\gpsServer\GPSServer\serverRun.cmd" "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
 
 # Pre-create database
 # $env:Data:DefaultConnection:ConnectionString = "Server=$sqlserver;Database=MusicStore;Integrated Security=False;User Id=$user;Password=$password;MultipleActiveResultSets=True;Connect Timeout=30"

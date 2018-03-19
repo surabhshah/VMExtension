@@ -206,7 +206,7 @@
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File VMAuto.ps1 -apiAppURI', variables('apiAppURI') ,'-adAppId', variables('adAppId'), '-adClientSecret', variables('adClientSecret'),'-adTenantName', variables('adTenantName'),'-restServer', variables('restServer'))]"
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File VMAuto.ps1 -apiAppURI ', variables('apiAppURI') ,' -adAppId ', variables('adAppId'), ' -adClientSecret ', variables('adClientSecret'),' -adTenantName ', variables('adTenantName'),' -restServer ', variables('restServer'))]"
                 }
             }
         }
