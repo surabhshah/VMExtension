@@ -38,12 +38,12 @@ Invoke-WebRequest http://github.com/surabhshah/VMExtension/raw/master/GPSServer.
 Expand-Archive C:\temp\GPSServer.zip c:\gpsServer
 
 # Azure SQL connection sting in environment variable
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdResource", $apiAppURI, [EnvironmentVariableTarget]::User)
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdApplicationId", $adAppId, [EnvironmentVariableTarget]::User)
-[Environment]::SetEnvironmentVariable("--prefix C:\""CUSTOMCONNSTR_AdClientSecret", $adClientSecret, [EnvironmentVariableTarget]::User)
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_RestServer", $restServer, [EnvironmentVariableTarget]::User)
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdTenantName", $adTenantName, [EnvironmentVariableTarget]::User)
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_DeviceName", "SynnexGPSGateway", [EnvironmentVariableTarget]::User)
+[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdResource", $apiAppURI, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdApplicationId", $adAppId, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdClientSecret", $adClientSecret, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_RestServer", $restServer, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdTenantName", $adTenantName, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_DeviceName", "SynnexGPSGateway", [EnvironmentVariableTarget]::Machine)
 
 #Start Node Server
 start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait

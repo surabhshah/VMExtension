@@ -34,7 +34,12 @@
         "subnetName": "Subnet",
         "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
         "subnetPrefix": "10.0.0.0/24",
-        "virtualNetworkName": "MyVNET"
+        "virtualNetworkName": "MyVNET",
+        "apiAppURI": "https://msiotoutlook.onmicrosoft.com/1c824300-190c-4663-88d7-5d1cde815c2b",
+        "adAppId": "2f5dbaee-de36-4a1f-bf41-2467710bd11e",
+        "adClientSecret": "E2pO+L1T+1hx9EcBBKpMOfdvD9d6eX8H7UOjal1jpXA=",
+        "adTenantName": "msiotoutlook.onmicrosoft.com",
+        "restServer": "https://assetSynnexAPIServ.azurewebsites.net/"
     },
     "resources": [
         {
@@ -201,7 +206,7 @@
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File VMAuto.ps1 -apiAppURI https://msiotoutlook.onmicrosoft.com/1c824300-190c-4663-88d7-5d1cde815c2b -adAppId 2f5dbaee-de36-4a1f-bf41-2467710bd11e -adClientSecret E2pO+L1T+1hx9EcBBKpMOfdvD9d6eX8H7UOjal1jpXA= -adTenantName msiotoutlook.onmicrosoft.com -restServer https://assetSynnexAPIServ.azurewebsites.net/')]"
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File VMAuto.ps1 -apiAppURI', variables('apiAppURI') ,'-adAppId', variables('adAppId'), '-adClientSecret', variables('adClientSecret'),'-adTenantName', variables('adTenantName'),'-restServer', variables('restServer'))]"
                 }
             }
         }
