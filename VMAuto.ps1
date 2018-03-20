@@ -46,7 +46,7 @@ Expand-Archive C:\temp\GPSServer.zip c:\gpsServer
 [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_DeviceName", "SynnexGPSGateway", [EnvironmentVariableTarget]::Machine)
 
 #Start Node Server
-start "C:\Program Files\nodejs\npm.cmd" "install forever -g" -Wait
+start "C:\Program Files\nodejs\npm.cmd" "install --prefix C:\gpsServer\GPSServer\ forever" -Wait
 [Environment]::SetEnvironmentVariable("Forever", "$env:appdata\npm\forever", [EnvironmentVariableTarget]::Machine)
 start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 # start "C:\Program Files\nodejs\node.exe" "C:\gpsServer\GPSServer\server.js"
