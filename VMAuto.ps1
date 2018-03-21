@@ -51,13 +51,14 @@ start "C:\Program Files\nodejs\npm.cmd" "install --prefix C:\gpsServer\GPSServer
 [Environment]::SetEnvironmentVariable("Forever", "C:\Users\$env:Username\AppData\Roaming\npm", [EnvironmentVariableTarget]::Machine)
 start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 # start "C:\Program Files\nodejs\node.exe" "C:\gpsServer\GPSServer\server.js"
-Copy-Item "C:\gpsServer\GPSServer\serverRun.cmd" "C:\Users\$env:Username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -Force
+Copy-Item "./node_modules/gpsserver/serverRun.cmd" "C:\Users\$env:Username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -Force
 #Start-Process "C:\gpsServer\GPSServer\serverRun.cmd"
+Start-Process "./node_modules/gpsserver/serverRun.cmd"
 $startupTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
-Register-ScheduledJob -Trigger $trigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServer
+Register-ScheduledJob -Trigger $startupTrigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServer
 $logonTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
 Register-ScheduledJob -Trigger $logonTrigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServerLogOn
-powershell.exe C:\gpsServer\GPSServer\serverStart.ps1
+powershell.exe ./node_modules/gpsserver/serverRun.cmd
 
 # Pre-create database
 # $env:Data:DefaultConnection:ConnectionString = "Server=$sqlserver;Database=MusicStore;Integrated Security=False;User Id=$user;Password=$password;MultipleActiveResultSets=True;Connect Timeout=30"
