@@ -13,6 +13,7 @@ Param (
 
 # Firewall
 netsh advfirewall firewall add rule name="http" dir=in action=allow protocol=TCP localport=80
+netsh advfirewall firewall add rule name="TCP_Server" dir=in action=allow protocol=TCP localport=9999
 
 # Folders
 New-Item -ItemType Directory c:\temp
@@ -51,7 +52,12 @@ start "C:\Program Files\nodejs\npm.cmd" "install --prefix C:\gpsServer\GPSServer
 start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 # start "C:\Program Files\nodejs\node.exe" "C:\gpsServer\GPSServer\server.js"
 Copy-Item "C:\gpsServer\GPSServer\serverRun.cmd" "C:\Users\$env:Username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -Force
-Start-Process "C:\gpsServer\GPSServer\serverRun.cmd"
+#Start-Process "C:\gpsServer\GPSServer\serverRun.cmd"
+$startupTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
+Register-ScheduledJob -Trigger $trigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServer
+$logonTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
+Register-ScheduledJob -Trigger $logonTrigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServerLogOn
+powershell.exe C:\gpsServer\GPSServer\serverStart.ps1
 
 # Pre-create database
 # $env:Data:DefaultConnection:ConnectionString = "Server=$sqlserver;Database=MusicStore;Integrated Security=False;User Id=$user;Password=$password;MultipleActiveResultSets=True;Connect Timeout=30"
