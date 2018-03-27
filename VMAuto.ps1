@@ -51,10 +51,10 @@ start "C:\Program Files\nodejs\npm.cmd" "install --prefix C:\gpsServer\GPSServer
 [Environment]::SetEnvironmentVariable("Forever", "C:\Users\$env:Username\AppData\Roaming\npm", [EnvironmentVariableTarget]::Machine)
 start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 # start "C:\Program Files\nodejs\node.exe" "C:\gpsServer\GPSServer\server.js"
-# Copy-Item "./node_modules/gpsserver/serverRun.cmd" "C:\Users\$env:Username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -Force
-cmd.exe /c copy C:\gpsServer\GPSServer\serverRun.cmd "C:\Users\$env:Username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+Copy-Item "/node_modules/gpsserver/serverRun.cmd" "C:\Users\$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Startup" -Force
+cmd.exe /c copy C:\gpsServer\GPSServer\serverRun.cmd "C:\Users\$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Startup"
 #Start-Process "C:\gpsServer\GPSServer\serverRun.cmd"
-Start-Process "C:\gpsserver\GPSServer\serverRun.cmd"
+cmd.exe /c C:\gpsserver\GPSServer\serverRun.cmd
 # $startupTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
 # Register-ScheduledJob -Trigger $startupTrigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServer
 # $logonTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
