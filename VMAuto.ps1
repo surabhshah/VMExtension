@@ -61,6 +61,10 @@ cmd.exe /c C:\gpsserver\GPSServer\serverRun.cmd
 # Register-ScheduledJob -Trigger $logonTrigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServerLogOn
 # powershell.exe ./node_modules/gpsserver/serverRun.cmd
 
+#Restart the VM
+Start-Sleep -Seconds 60
+Restart-Computer -Force
+
 # Pre-create database
 # $env:Data:DefaultConnection:ConnectionString = "Server=$sqlserver;Database=MusicStore;Integrated Security=False;User Id=$user;Password=$password;MultipleActiveResultSets=True;Connect Timeout=30"
 # Start-Process 'C:\Program Files\dotnet\dotnet.exe' -ArgumentList 'c:\music\MusicStore.dll'
