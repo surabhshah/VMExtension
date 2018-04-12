@@ -10,7 +10,11 @@ Param (
     [string]$adTenantName,
     [string]$restServer,
     [string]$username,
-    [string]$password
+    [string]$password,
+    [string]$userId,
+    [string]$userPassword,
+    [string]$replyUrls,
+    [string]$sqlConnectionString
 )
 
 # Firewall
@@ -56,6 +60,11 @@ start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 cmd.exe /c copy C:\gpsServer\GPSServer\serverRun.cmd "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Startup"
 cmd.exe /c copy C:\gpsServer\GPSServer\LockMe.cmd "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Startup"
 cmd.exe /c "C:\temp\Autologon.exe $username $env:COMPUTERNAME $password /accepteula"
+
+# Start AD Registration PowerShell script AzureAdApplicationDB
+Unblock-File C:\gpsServer\GPSServer\AzureAdApplicationDB.ps1
+C:\gpsServer\GPSServer\AzureAdApplicationDB.ps1 -userId $userId -userPassword $userPassword -replyUrls $replyUrls -sqlConnectionString $sqlConnectionString 
+
 
 # $startupTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
 # Register-ScheduledJob -Trigger $startupTrigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServer
