@@ -4,13 +4,13 @@
 #>
 
 Param (
-    [string]$apiAppURI,
-    [string]$adAppId,
-    [string]$adClientSecret,
-    [string]$adTenantName,
     [string]$restServer,
     [string]$username,
-    [string]$password
+    [string]$password,
+    [string]$userId,
+    [string]$userPassword,
+    [string]$replyUrls,
+    [string]$sqlConnectionString
 )
 
 # Firewall
@@ -41,11 +41,11 @@ Invoke-WebRequest http://github.com/surabhshah/VMExtension/raw/master/GPSServer.
 Expand-Archive C:\temp\GPSServer.zip c:\gpsServer
 
 # Azure SQL connection sting in environment variable
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdResource", $apiAppURI, [EnvironmentVariableTarget]::Machine)
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdApplicationId", $adAppId, [EnvironmentVariableTarget]::Machine)
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdClientSecret", $adClientSecret, [EnvironmentVariableTarget]::Machine)
+# [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdResource", $apiAppURI, [EnvironmentVariableTarget]::Machine)
+# [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdApplicationId", $adAppId, [EnvironmentVariableTarget]::Machine)
+# [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdClientSecret", $adClientSecret, [EnvironmentVariableTarget]::Machine)
 [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_RestServer", $restServer, [EnvironmentVariableTarget]::Machine)
-[Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdTenantName", $adTenantName, [EnvironmentVariableTarget]::Machine)
+# [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdTenantName", $adTenantName, [EnvironmentVariableTarget]::Machine)
 [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_DeviceName", "SynnexGPSGateway", [EnvironmentVariableTarget]::Machine)
 
 #Start Node Server
@@ -56,6 +56,11 @@ start "C:\Program Files\nodejs\npm.cmd" "install C:\gpsServer\GPSServer" -Wait
 cmd.exe /c copy C:\gpsServer\GPSServer\serverRun.cmd "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Startup"
 cmd.exe /c copy C:\gpsServer\GPSServer\LockMe.cmd "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Startup"
 cmd.exe /c "C:\temp\Autologon.exe $username $env:COMPUTERNAME $password /accepteula"
+
+# Start AD Registration PowerShell script AzureAdApplication
+Unblock-File C:\gpsServer\GPSServer\AzureAdApplication.ps1
+C:\gpsServer\GPSServer\AzureAdApplication.ps1 -userId $userId -userPassword $userPassword -replyUrls $replyUrls -sqlConnectionString $sqlConnectionString 
+
 
 # $startupTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
 # Register-ScheduledJob -Trigger $startupTrigger -FilePath C:\gpsServer\GPSServer\serverStart.ps1 -Name StartHttpServer
