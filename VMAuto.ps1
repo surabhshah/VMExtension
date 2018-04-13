@@ -57,9 +57,9 @@ cmd.exe /c copy C:\gpsServer\GPSServer\serverRun.cmd "$env:ALLUSERSPROFILE\Micro
 cmd.exe /c copy C:\gpsServer\GPSServer\LockMe.cmd "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Startup"
 cmd.exe /c "C:\temp\Autologon.exe $username $env:COMPUTERNAME $password /accepteula"
 
-# Start AD Registration PowerShell script AzureAdApplication
+# Start AD Registration PowerShell script AzureAdApplicationDB
 Unblock-File C:\gpsServer\GPSServer\AzureAdApplication.ps1
-C:\gpsServer\GPSServer\AzureAdApplication.ps1 -userId $userId -userPassword $userPassword -replyUrls $replyUrls -sqlConnectionString $sqlConnectionString 
+C:\gpsServer\GPSServer\AzureAdApplication.ps1 -userId "$userId" -userPassword "$userPassword" -replyUrls "$replyUrls" -sqlConnectionString "$sqlConnectionString" 
 
 
 # $startupTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
