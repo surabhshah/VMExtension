@@ -48,6 +48,11 @@ Expand-Archive C:\temp\GPSServer.zip c:\gpsServer
 # [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_AdTenantName", $adTenantName, [EnvironmentVariableTarget]::Machine)
 [Environment]::SetEnvironmentVariable("CUSTOMCONNSTR_DeviceName", "SynnexGPSGateway", [EnvironmentVariableTarget]::Machine)
 
+[Environment]::SetEnvironmentVariable("AAD_UserId", $userId, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("AAD_UserPassword", $userPassword, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("AAD_ReplyUrls", $replyUrls, [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("AAD_SqlConnectionString", $sqlConnectionString, [EnvironmentVariableTarget]::Machine)
+
 #Start Node Server
 start "C:\Program Files\nodejs\npm.cmd" "install --prefix C:\gpsServer\GPSServer\ forever" -Wait
 [Environment]::SetEnvironmentVariable("Forever", "C:\Users\$env:Username\AppData\Roaming\npm", [EnvironmentVariableTarget]::Machine)
