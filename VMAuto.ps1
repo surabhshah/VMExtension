@@ -64,7 +64,7 @@ cmd.exe /c "C:\temp\Autologon.exe $username $env:COMPUTERNAME $password /accepte
 
 # Start AD Registration PowerShell script AzureAdApplicationDB
 Unblock-File C:\gpsServer\GPSServer\AzureAdApplication.ps1
-C:\gpsServer\GPSServer\AzureAdApplication.ps1 -userId "$userId" -userPassword "$userPassword" -replyUrls "$replyUrls" -sqlConnectionString "$sqlConnectionString" 
+C:\gpsServer\GPSServer\AzureAdApplication.ps1
 
 
 # $startupTrigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
